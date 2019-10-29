@@ -9,8 +9,11 @@
  */
 
 #include <stdint.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 #include <curl/curl.h>
-#include "tradebot_common.h"
+#include <tradebot_common.h>
 
 struct libcurl_string
 {
