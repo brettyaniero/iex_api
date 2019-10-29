@@ -8,6 +8,8 @@
  * Last modified:   10/25/19 14:29:00 
  */
 
+#include <https_handler.h>
+
 size_t libcurl_writefunc(void *ptr, size_t size, size_t nmemb, struct libcurl_string *data);
 
 TradebotStatus init_libcurl(void)
@@ -87,19 +89,19 @@ TradebotStatus https_request(char *res_buf, char *url)
     return status;
 }
 
-size_t libcurl_writefunc(void *ptr, size_t size, size_t nmemb, struct string *data)
+size_t libcurl_writefunc(void *ptr, size_t size, size_t nmemb, struct libcurl_string *data)
 {
-    size_t new_len = s->len + (size * nmemb);
-    s->ptr = realloc(s->ptr, new_len + 1);
+    size_t new_len = data->len + (size * nmemb);
+    data->ptr = realloc(data->ptr, new_len + 1);
 
-    if (s->ptr == NULL) 
+    if (data->ptr == NULL) 
     {
         fprintf(stderr, "libcurl realloc() failed\n");
     }
 
-    memcpy(s->ptr+s->len, ptr, size*nmemb);
-    s->ptr[new_len] = '\0';
-    s->len = new_len;
+    memcpy(data->ptr + data->len, ptr, size * nmemb);
+    data->ptr[new_len] = '\0';
+    data->len = new_len;
 
     return (size * nmemb);
 }
