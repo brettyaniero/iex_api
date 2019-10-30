@@ -10,6 +10,8 @@
 
 #include <https_handler.h>
 
+#define MAX_HTTPS_RESPONSE_SIZE 10000
+
 size_t libcurl_writefunc(void *ptr, size_t size, size_t nmemb, struct libcurl_string *data);
 
 TradebotStatus init_libcurl(void)
@@ -26,18 +28,17 @@ TradebotStatus init_libcurl(void)
     return status;
 }
 
-// TODO: Copy libcurl_string into user buffer
 TradebotStatus https_request(char *res_buf, char *url)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
     CURL *curl;
     CURLcode res;
+    struct libcurl_string s;
 
     curl = curl_easy_init();
 
     if (curl)
     {
-        struct libcurl_string s;
         s.len = 0;
         s.ptr = malloc(s.len + 1);
         s.ptr[0] = '\0';
@@ -82,6 +83,10 @@ TradebotStatus https_request(char *res_buf, char *url)
     if (res != CURLE_OK)
     {
         status = TRADEBOT_FAIL; 
+    }
+    else
+    {
+        strncpy(res_buf, s.ptr, MAX_HTTPS_RESPONSE_SIZE);
     }
 
     curl_easy_cleanup(curl);
