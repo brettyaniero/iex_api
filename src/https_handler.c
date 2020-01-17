@@ -10,7 +10,7 @@
 
 #include <https_handler.h>
 
-#define MAX_HTTPS_RESPONSE_SIZE 10000
+#define MAX_HTTPS_RESPONSE_SIZE 100000
 
 size_t libcurl_writefunc(void *ptr, size_t size, size_t nmemb, struct libcurl_string *data);
 

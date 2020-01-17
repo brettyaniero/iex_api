@@ -8,6 +8,9 @@
  * Last modified:   10/25/19 14:29:00 
  */
 
+#ifndef HTTPS_HANDLER_H_
+#define HTTPS_HANDLER_H_
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -38,3 +41,5 @@ struct libcurl_string
  * @return  TradebotStatus      Result of operation.  
  ******************************************************************************/
  TradebotStatus https_request(char *res_buf, char *url);
+
+#endif
