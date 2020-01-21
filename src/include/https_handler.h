@@ -29,9 +29,22 @@ struct libcurl_string
  * program calls any other function in libcurl. The environment it
  * sets up is constant for the life of the program.
  *
+ * This function is not thread safe. You must not call it when any other thread
+ * in the program is running.
+ *
  * @return  TradebotStatus    Result of operation.  
  ******************************************************************************/
  TradebotStatus init_libcurl(void);
+
+ /***************************************************************************//**
+  * Frees resources acquired by the libcurl library. This function should be
+  * called once for each call made to init_libcurl, after you are done using
+  * libcurl.
+  *
+  * This function is not thread safe. You must not call it when any other thread
+  * in the program is running.
+  ******************************************************************************/
+ void deinit_libcurl(void);
 
 /***************************************************************************//**
  * Initiate an HTTPS request to the target URL. 

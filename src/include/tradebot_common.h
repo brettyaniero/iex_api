@@ -5,7 +5,7 @@
  *
  * Author:          Brett Yaniero
  * Last modified:   10/25/19 15:00:00
- * Last updated: 	1/16/20 12:01:00
+ * Last updated:    1/16/20 12:01:00
  */
 
 #ifndef TRADEBOT_COMMON_H_
@@ -24,19 +24,19 @@
 
  typedef struct
  {
-	 char symbol[20];
-	 char company_name[100];
-	 char primary_exchange[50];
-	 double latest_price;
-	 uint32_t latest_volume;
-	 double buy_price;
-	 double sell_price;
+     char symbol[20];
+     char company_name[100];
+     char primary_exchange[50];
+     double latest_price;
+     uint32_t latest_volume;
+     double buy_price;
+     double sell_price;
  } Stock;
 
  typedef struct
  {
-	 char name[50];
-	 Stock stocks[MAX_ALLOWED_STOCKS];
+     char name[50];
+     Stock stocks[MAX_ALLOWED_STOCKS];
  } TradebotPortfolio;
 
 #endif

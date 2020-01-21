@@ -28,6 +28,12 @@ TradebotStatus init_libcurl(void)
     return status;
 }
 
+void deinit_libcurl(void)
+{
+    /* No way to check if this was successful or not */
+    curl_global_cleanup();
+}
+
 TradebotStatus https_request(char *res_buf, char *url)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
