@@ -58,18 +58,22 @@ TradebotStatus process_gainers(json_value *json)
     /* Process array */
     uint32_t array_len, x;
     array_len = json->u.array.length;
+    GainersData data[array_len];
+
     for (x = 0; x < array_len; x++)
     {
         /* Process each object in array */
-        uint32_t object_len, y;
-        object_len = json->u.array.values[x]->u.object.length;
-        for (y = 0; y < object_len; y++)
-        {
-            if (y == 0)
-            {
-                printf("string: %s\n", json->u.array.values[x]->u.object.values[y].value->u.string.ptr);
-            }
-        }
+        strncpy(data[x].symbol,
+                json->u.array.values[x]->u.object.values[GAINERS_SYMBOL].value->u.string.ptr,
+                IEX_MAX_SYMBOL_SIZE - 1);
+        strncpy(data[x].company_name,
+                        json->u.array.values[x]->u.object.values[GAINERS_COMPANY_NAME].value->u.string.ptr,
+                        IEX_MAX_COMPANY_NAME - 1);
+        data[x].latest_price = json->u.array.values[x]->u.object.values[GAINERS_LATEST_PRICE].value->u.dbl;
+
+        printf("symbol: %s\n", data[x].symbol);
+        printf("company name: %s\n", data[x].company_name);
+        printf("latest price: %f\n", data[x].latest_price);
     }
 
     return TRADEBOT_SUCCESS;
