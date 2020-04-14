@@ -10,8 +10,8 @@
  * Last updated:    1/17/20 01:26:00
  */
 
-#ifndef IEX_API_H_
-#define IEX_API_H_
+#ifndef _IEX_API_H
+#define _IEX_API_H
 
 #include <stdbool.h>
 
@@ -28,6 +28,7 @@
 #define IEX_MAX_COMPANY_NAME        100
 #define IEX_MAX_EXCHANGE_NAME       50
 #define IEX_MAX_TIME_OF_RETRIEVAL   20
+#define IEX_MAX_SOURCE_SIZE         100
 #define IEX_MAX_DATE_SIZE           100
 
 /**
@@ -41,10 +42,16 @@ typedef struct {
     char calculation_price[IEX_MAX_TIME_OF_RETRIEVAL];
     double open;
     uint32_t open_time;
+    char open_source[IEX_MAX_SOURCE_SIZE];
     double close;
     uint32_t close_time;
+    char close_source[IEX_MAX_SOURCE_SIZE];
     double high;
+    uint32_t high_time;
+    char high_source[IEX_MAX_SOURCE_SIZE];
     double low;
+    uint32_t low_time;
+    char low_source[IEX_MAX_SOURCE_SIZE];
     double latest_price;
     char latest_source[IEX_MAX_TIME_OF_RETRIEVAL];
     char latest_time[IEX_MAX_DATE_SIZE];
@@ -92,43 +99,55 @@ typedef enum
     GAINERS_CALCULATION_PRICE           = 3,
     GAINERS_OPEN                        = 4,
     GAINERS_OPEN_TIME                   = 5,
-    GAINERS_CLOSE                       = 6,
-    GAINERS_CLOSE_TIME                  = 7,
-    GAINERS_HIGH                        = 8,
-    GAINERS_LOW                         = 9,
-    GAINERS_LATEST_PRICE                = 10,
-    GAINERS_LATEST_SOURCE               = 11,
-    GAINERS_LATEST_TIME                 = 12,
-    GAINERS_LATEST_UPDATE               = 13,
-    GAINERS_LATEST_VOLUME               = 14,
-    GAINERS_IEX_REALTIME_PRICE          = 15,
-    GAINERS_IEX_REALTIME_SIZE           = 16,
-    GAINERS_IEX_LAST_UPDATED            = 17,
-    GAINERS_DELAYED_PRICE               = 18,
-    GAINERS_DELAYED_PRICE_TIME          = 19,
-    GAINERS_EXTENDED_PRICE              = 20,
-    GAINERS_EXTENDED_CHANGE             = 21,
-    GAINERS_EXTENDED_CHANGE_PERCENT     = 22,
-    GAINERS_EXTENDED_PRICE_TIME         = 23,
-    GAINERS_PREVIOUS_CLOSE              = 24,
-    GAINERS_PREVIOUS_VOLUME             = 25,
-    GAINERS_CHANGE                      = 26,
-    GAINERS_CHANGE_PERCENT              = 27,
-    GAINERS_VOLUME                      = 28,
-    GAINERS_IEX_MARKET_PERCENT          = 29,
-    GAINERS_IEX_VOLUME                  = 30,
-    GAINERS_AVG_TOTAL_VOLUME            = 31,
-    GAINERS_IEX_BID_PRICE               = 32,
-    GAINERS_IEX_BID_SIZE                = 33,
-    GAINERS_IEX_ASK_PRICE               = 34,
-    GAINERS_IEX_ASK_SIZE                = 35,
-    GAINERS_MARKET_CAP                  = 36,
-    GAINERS_PE_RATIO                    = 37,
-    GAINERS_WEEK_52_HIGH                = 38,
-    GAINERS_WEEK_52_LOW                 = 39,
-    GAINERS_YTD_CHANGE                  = 40,
-    GAINERS_LAST_TRADE_TIME             = 41,
-    GAINERS_IS_US_MARKET_OPEN           = 42,
+    GAINERS_OPEN_SOURCE                 = 6,
+    GAINERS_CLOSE                       = 7,
+    GAINERS_CLOSE_TIME                  = 8,
+    GAINERS_CLOSE_SOURCE                = 9,
+    GAINERS_HIGH                        = 10,
+    GAINERS_HIGH_TIME                   = 11,
+    GAINERS_HIGH_SOURCE                 = 12,
+    GAINERS_LOW                         = 13,
+    GAINERS_LOW_TIME                    = 14,
+    GAINERS_LOW_SOURCE                  = 15,
+    GAINERS_LATEST_PRICE                = 16,
+    GAINERS_LATEST_SOURCE               = 17,
+    GAINERS_LATEST_TIME                 = 18,
+    GAINERS_LATEST_UPDATE               = 19,
+    GAINERS_LATEST_VOLUME               = 20,
+    GAINERS_IEX_REALTIME_PRICE          = 21,
+    GAINERS_IEX_REALTIME_SIZE           = 22,
+    GAINERS_IEX_LAST_UPDATED            = 23,
+    GAINERS_DELAYED_PRICE               = 24,
+    GAINERS_DELAYED_PRICE_TIME          = 25,
+    GAINERS_ODD_LOT_DELAYED_PRICE       = 26,
+    GAINERS_ODD_LOT_DELAYED_PRICE_TIME  = 27,
+    GAINERS_EXTENDED_PRICE              = 28,
+    GAINERS_EXTENDED_CHANGE             = 29,
+    GAINERS_EXTENDED_CHANGE_PERCENT     = 30,
+    GAINERS_EXTENDED_PRICE_TIME         = 31,
+    GAINERS_PREVIOUS_CLOSE              = 32,
+    GAINERS_PREVIOUS_VOLUME             = 33,
+    GAINERS_CHANGE                      = 34,
+    GAINERS_CHANGE_PERCENT              = 35,
+    GAINERS_VOLUME                      = 36,
+    GAINERS_IEX_MARKET_PERCENT          = 37,
+    GAINERS_IEX_VOLUME                  = 38,
+    GAINERS_AVG_TOTAL_VOLUME            = 39,
+    GAINERS_IEX_BID_PRICE               = 40,
+    GAINERS_IEX_BID_SIZE                = 41,
+    GAINERS_IEX_ASK_PRICE               = 42,
+    GAINERS_IEX_ASK_SIZE                = 43,
+    GAINERS_IEX_OPEN                    = 44,
+    GAINERS_IEX_OPEN_TIME               = 45,
+    GAINERS_IEX_CLOSE                   = 46,
+    GAINERS_IEX_CLOSE_TIME              = 47,
+    GAINERS_MARKET_CAP                  = 48,
+    GAINERS_PE_RATIO                    = 49,
+    GAINERS_WEEK_52_HIGH                = 50,
+    GAINERS_WEEK_52_LOW                 = 51,
+    GAINERS_YTD_CHANGE                  = 52,
+    GAINERS_LAST_TRADE_TIME             = 53,
+    GAINERS_IS_US_MARKET_OPEN           = 54,
 } GainersMap;
 
 /***************************************************************************//**
@@ -142,12 +161,15 @@ char *load_api_key();
 /***************************************************************************//**
  * Retrieves a list of top gaining stocks for the day.
  *
+ * @param   api_key             Pointer to API key string.
  * @param   list_limit          Number of items to return.
  * @param   display_percent     If set to true, all percentage values will be
  *                              multiplied by a factor of 100.
- * @param   api_key             Pointer to API key string.
+ * @param   data                Pointer to GainersData data structure to
+ *                              populate.
  * @return  TradebotStatus      Result of operation.
  ******************************************************************************/
-TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent, char *api_key);
+TradebotStatus retrieve_gainers(char *api_key, uint16_t list_limit,
+        bool display_percent, GainersData *data);
 
-#endif /* IEX_API_H_ */
+#endif /* _IEX_API_H */

@@ -8,8 +8,8 @@
  * Last updated:    1/16/20 12:01:00
  */
 
-#ifndef TRADEBOT_COMMON_H_
-#define TRADEBOT_COMMON_H_
+#ifndef _TRADEBOT_COMMON_H
+#define _TRADEBOT_COMMON_H
 
 #include <stdint.h>
 

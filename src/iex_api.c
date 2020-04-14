@@ -16,9 +16,10 @@
 #include "iex_api.h"
 #include "json.h"
 
-TradebotStatus process_gainers(json_value *json);
+TradebotStatus process_gainers(json_value *json, GainersData *data);
 
-TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent, char *api_key)
+TradebotStatus retrieve_gainers(char *api_key, uint16_t list_limit,
+        bool display_percent, GainersData *data)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
 
@@ -45,7 +46,7 @@ TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent, char 
         exit(1);
     }
 
-    process_gainers(value);
+    process_gainers(value, data);
 
     return status;
 }
@@ -74,7 +75,7 @@ char *load_api_key()
     return api_key;
 }
 
-TradebotStatus process_gainers(json_value *json)
+TradebotStatus process_gainers(json_value *json, GainersData *data)
 {
     if (json == NULL)
     {
@@ -84,7 +85,6 @@ TradebotStatus process_gainers(json_value *json)
     /* Process array */
     uint32_t array_len, x;
     array_len = json->u.array.length;
-    GainersData data[array_len];
 
     for (x = 0; x < array_len; x++)
     {

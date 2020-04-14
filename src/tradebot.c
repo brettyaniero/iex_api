@@ -1,7 +1,9 @@
 
-#include <https_handler.h>
-#include <iex_api.h>
-#include <json.h>
+#include "analyzer.h"
+#include "https_handler.h"
+#include "iex_api.h"
+#include "json.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -23,9 +25,15 @@ int main(int argc, char *argv[])
 TradebotStatus tradebot_loop()
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
-    char *api_key = load_api_key();
 
-    status = retrieve_gainers(10, false, api_key);
+    /* Attempt to load API key from file */
+    char *api_key = load_api_key();
+    if (!api_key)
+    {
+        return TRADEBOT_FAIL;
+    }
+
+    status = analyze_gainers(api_key, 1);
 
     free(api_key);
 

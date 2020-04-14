@@ -8,8 +8,8 @@
  * Last modified:   10/25/19 14:29:00 
  */
 
-#ifndef HTTPS_HANDLER_H_
-#define HTTPS_HANDLER_H_
+#ifndef _HTTPS_HANDLER_H
+#define _HTTPS_HANDLER_H
 
 #include <stdint.h>
 #include <stddef.h>
