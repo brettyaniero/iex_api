@@ -18,10 +18,11 @@
 #include "tradebot_common.h"
 
 #define IEX_BASE_URL                "https://cloud.iexapis.com/v1/"
-#define IEX_ACCESS_TOKEN            "sk_8f479ee9b22b4ed2ad369bb53ae66a66"
+#define IEX_ACCESS_TOKEN_FILE_PATH  "/srv/iex_access_token"
 
 #define IEX_GAINERS_ENDPOINT        "stock/market/list/gainers"
 
+#define IEX_ACCESS_TOKEN_SIZE       35
 #define IEX_MAX_URL_LEN             150
 #define IEX_MAX_SYMBOL_SIZE         50
 #define IEX_MAX_COMPANY_NAME        100
@@ -131,13 +132,22 @@ typedef enum
 } GainersMap;
 
 /***************************************************************************//**
+ * Loads API key from file.
+ *
+ * @return  char *              Pointer to API key string, if one is found.
+ *                              NULL if error occurred.
+ ******************************************************************************/
+char *load_api_key();
+
+/***************************************************************************//**
  * Retrieves a list of top gaining stocks for the day.
  *
- * @param   list_limit          Number of items to return
+ * @param   list_limit          Number of items to return.
  * @param   display_percent     If set to true, all percentage values will be
- *                              multiplied by a factor of 100
+ *                              multiplied by a factor of 100.
+ * @param   api_key             Pointer to API key string.
  * @return  TradebotStatus      Result of operation.
  ******************************************************************************/
-TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent);
+TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent, char *api_key);
 
 #endif /* IEX_API_H_ */

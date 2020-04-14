@@ -23,8 +23,11 @@ int main(int argc, char *argv[])
 TradebotStatus tradebot_loop()
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
+    char *api_key = load_api_key();
 
-    status = retrieve_gainers(10, false);
+    status = retrieve_gainers(10, false, api_key);
+
+    free(api_key);
 
     return status;
 }

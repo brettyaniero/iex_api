@@ -10,20 +10,22 @@
  * Last updated:    1/17/20 01:26:00
  */
 
+#include <stdio.h>
+
 #include "https_handler.h"
 #include "iex_api.h"
 #include "json.h"
 
 TradebotStatus process_gainers(json_value *json);
 
-TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent)
+TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent, char *api_key)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
 
     /* Build API URL string */
     char target_url[IEX_MAX_URL_LEN];
     snprintf(target_url, sizeof(target_url), "%s%s%s%s", IEX_BASE_URL,
-            IEX_GAINERS_ENDPOINT, "?token=", IEX_ACCESS_TOKEN);
+            IEX_GAINERS_ENDPOINT, "?token=", api_key);
 
     char buf[100000] = {0};
 
@@ -46,6 +48,30 @@ TradebotStatus retrieve_gainers(uint16_t list_limit, bool display_percent)
     process_gainers(value);
 
     return status;
+}
+
+char *load_api_key()
+{
+    char *api_key = malloc(sizeof(char) * IEX_ACCESS_TOKEN_SIZE + 1);
+
+    FILE *fd;
+    fd = fopen(IEX_ACCESS_TOKEN_FILE_PATH, "r");
+    fgets(api_key, sizeof(char) * IEX_ACCESS_TOKEN_SIZE + 1, fd);
+
+    if(fclose(fd))
+    {
+        /* We weren't able to close the file, so we should let the caller
+         * know something is wrong */
+        return NULL;
+    }
+
+    if (!api_key)
+    {
+        /* An error has occurred and we weren't able to read the API key */
+        return NULL;
+    }
+
+    return api_key;
 }
 
 TradebotStatus process_gainers(json_value *json)
