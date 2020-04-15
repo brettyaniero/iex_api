@@ -7,17 +7,23 @@
  * Last modified:   4/14/20 14:11:00
  */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "analyzer.h"
 #include "iex_api.h"
+#include "portfolio.h"
 
-#include <stdlib.h>
-
-TradebotStatus analyze_gainers(char *api_key, uint16_t list_limit)
+TradebotStatus analyze_gainers(TradebotPortfolio *tp, IEXParams *params)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
-    GainersData *data = malloc(sizeof(GainersData) * list_limit);
+    GainersData *data = malloc(sizeof(GainersData) * params->list_limit);
 
-    status = retrieve_gainers(api_key, list_limit, false, data);
+    status = retrieve_gainers(params, data);
+
+    /* Loop through each stock in the gainers list */
+
 
     return status;
 }

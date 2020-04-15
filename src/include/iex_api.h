@@ -14,6 +14,7 @@
 #define _IEX_API_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "tradebot_common.h"
 
@@ -30,6 +31,13 @@
 #define IEX_MAX_TIME_OF_RETRIEVAL   20
 #define IEX_MAX_SOURCE_SIZE         100
 #define IEX_MAX_DATE_SIZE           100
+
+typedef struct {
+    char api_key[IEX_ACCESS_TOKEN_SIZE + 1];
+    uint16_t list_limit;
+    bool display_percent;
+    uint16_t rx_list_size;
+} IEXParams;
 
 /**
  * IEX Gainers data structure.
@@ -153,23 +161,20 @@ typedef enum
 /***************************************************************************//**
  * Loads API key from file.
  *
- * @return  char *              Pointer to API key string, if one is found.
- *                              NULL if error occurred.
+ * @param   api_key             Pointer to API key string.
+ *
+ * @return  TradebotStatus      Result of operation.
  ******************************************************************************/
-char *load_api_key();
+TradebotStatus load_api_key(char *api_key);
 
 /***************************************************************************//**
  * Retrieves a list of top gaining stocks for the day.
  *
- * @param   api_key             Pointer to API key string.
- * @param   list_limit          Number of items to return.
- * @param   display_percent     If set to true, all percentage values will be
- *                              multiplied by a factor of 100.
+ * @param   params              IEX query parameters data structure.
  * @param   data                Pointer to GainersData data structure to
  *                              populate.
  * @return  TradebotStatus      Result of operation.
  ******************************************************************************/
-TradebotStatus retrieve_gainers(char *api_key, uint16_t list_limit,
-        bool display_percent, GainersData *data);
+TradebotStatus retrieve_gainers(IEXParams *params, GainersData *data);
 
 #endif /* _IEX_API_H */

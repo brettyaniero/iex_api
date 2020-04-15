@@ -16,17 +16,16 @@
 #include "iex_api.h"
 #include "json.h"
 
-TradebotStatus process_gainers(json_value *json, GainersData *data);
+uint16_t process_gainers(json_value *json, GainersData *data);
 
-TradebotStatus retrieve_gainers(char *api_key, uint16_t list_limit,
-        bool display_percent, GainersData *data)
+TradebotStatus retrieve_gainers(IEXParams *params, GainersData *data)
 {
     TradebotStatus status = TRADEBOT_SUCCESS;
 
     /* Build API URL string */
     char target_url[IEX_MAX_URL_LEN];
     snprintf(target_url, sizeof(target_url), "%s%s%s%s", IEX_BASE_URL,
-            IEX_GAINERS_ENDPOINT, "?token=", api_key);
+            IEX_GAINERS_ENDPOINT, "?token=", params->api_key);
 
     char buf[100000] = {0};
 
@@ -41,47 +40,16 @@ TradebotStatus retrieve_gainers(char *api_key, uint16_t list_limit,
 
     json_value *value = json_parse(json, 100000);
 
-    if (status != TRADEBOT_SUCCESS) {
-        printf("ERROR\n");
-        exit(1);
-    }
+    if (!value)
+        return TRADEBOT_FAIL;
 
-    process_gainers(value, data);
+    uint16_t rx_list_size = process_gainers(value, data);
 
     return status;
 }
 
-char *load_api_key()
+uint16_t process_gainers(json_value *json, GainersData *data)
 {
-    char *api_key = malloc(sizeof(char) * IEX_ACCESS_TOKEN_SIZE + 1);
-
-    FILE *fd;
-    fd = fopen(IEX_ACCESS_TOKEN_FILE_PATH, "r");
-    fgets(api_key, sizeof(char) * IEX_ACCESS_TOKEN_SIZE + 1, fd);
-
-    if(fclose(fd))
-    {
-        /* We weren't able to close the file, so we should let the caller
-         * know something is wrong */
-        return NULL;
-    }
-
-    if (!api_key)
-    {
-        /* An error has occurred and we weren't able to read the API key */
-        return NULL;
-    }
-
-    return api_key;
-}
-
-TradebotStatus process_gainers(json_value *json, GainersData *data)
-{
-    if (json == NULL)
-    {
-        return TRADEBOT_FAIL;
-    }
-
     /* Process array */
     uint32_t array_len, x;
     array_len = json->u.array.length;
@@ -97,9 +65,32 @@ TradebotStatus process_gainers(json_value *json, GainersData *data)
                         IEX_MAX_COMPANY_NAME - 1);
         data[x].latest_price = json->u.array.values[x]->u.object.values[GAINERS_LATEST_PRICE].value->u.dbl;
 
-        printf("symbol: %s\n", data[x].symbol);
-        printf("company name: %s\n", data[x].company_name);
-        printf("latest price: %f\n", data[x].latest_price);
+        // printf("symbol: %s\n", data[x].symbol);
+        // printf("company name: %s\n", data[x].company_name);
+        // printf("latest price: %f\n", data[x].latest_price);
+    }
+
+    return array_len;
+}
+
+
+TradebotStatus load_api_key(char *api_key)
+{
+    FILE *fd;
+    fd = fopen(IEX_ACCESS_TOKEN_FILE_PATH, "r");
+    fgets(api_key, sizeof(char) * IEX_ACCESS_TOKEN_SIZE + 1, fd);
+
+    if(fclose(fd))
+    {
+        /* We weren't able to close the file, so we should let the caller
+         * know something is wrong */
+        return TRADEBOT_FAIL;
+    }
+
+    if (!api_key)
+    {
+        /* An error has occurred and we weren't able to read the API key */
+        return TRADEBOT_FAIL;
     }
 
     return TRADEBOT_SUCCESS;
