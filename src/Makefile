@@ -7,10 +7,10 @@ CFLAGS=-Wall -I$(INCDIR)
 
 LIBS=-lcurl -lm
 
-_DEPS=https_handler.h tradebot_common.h json.h iex_api.h analyzer.h
+_DEPS=https_handler.h tradebot_common.h json.h iex_api.h analyzer.h portfolio.h
 DEPS=$(patsubst %,$(INCDIR)/%,$(_DEPS))
 
-_OBJ=tradebot.o https_handler.o json.o iex_api.o analyzer.o
+_OBJ=tradebot.o https_handler.o json.o iex_api.o analyzer.o portfolio.o
 OBJ=$(patsubst %, $(OBJDIR)/%,$(_OBJ))
 
 $(OBJDIR)/%.o: %.c $(DEPS)
