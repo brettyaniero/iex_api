@@ -1074,7 +1074,6 @@ void process_array(json_value* value, int depth)
 
 void process_value(json_value* value, int depth)
 {
-    int j;
     if (value == NULL) {
         return;
     }
@@ -1102,6 +1101,9 @@ void process_value(json_value* value, int depth)
             break;
         case json_boolean:
             printf("bool: %d\n", value->u.boolean);
+            break;
+        case json_null:
+            printf("null\n");
             break;
     }
 }
