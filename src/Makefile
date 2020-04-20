@@ -1,6 +1,7 @@
 INCDIR=./include
 LIBDIR=./lib
-OBJDIR=./obj
+OBJDIR_TB=./obj_tb
+OBJDIR_SB=./obj_sb
 
 CC=gcc
 CFLAGS=-Wall -I$(INCDIR)
@@ -11,13 +12,23 @@ _DEPS=https_handler.h tradebot_common.h json.h iex_api.h analyzer.h portfolio.h
 DEPS=$(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 _OBJ=tradebot.o https_handler.o json.o iex_api.o analyzer.o portfolio.o
-OBJ=$(patsubst %, $(OBJDIR)/%,$(_OBJ))
+OBJ_TB=$(patsubst %, $(OBJDIR_TB)/%,$(_OBJ))
+OBJ_SB=$(patsubst %, $(OBJDIR_SB)/%,$(_OBJ))
 
-$(OBJDIR)/%.o: %.c $(DEPS)
-	mkdir -p $(OBJDIR)
+$(OBJDIR_TB)/%.o: %.c $(DEPS)
+	mkdir -p $(OBJDIR_TB)
+	$(CC) -c -o $@ $< $(CFLAGS)
+	
+$(OBJDIR_SB)/%.o: %.c $(DEPS)
+	mkdir -p $(OBJDIR_SB)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-tradebot: $(OBJ)
+tradebot: $(OBJ_TB)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	
+sandbox : CFLAGS+=-D IEX_SANDBOX_MODE	
+	
+sandbox: $(OBJ_SB)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 all: tradebot
@@ -26,4 +37,4 @@ all: tradebot
 .PHONY: clean
 
 clean:
-	rm -rf $(OBJDIR) tradebot
+	rm -rf $(OBJDIR_TB) $(OBJDIR_SB) tradebot sandbox

@@ -18,10 +18,13 @@
 
 #include "tradebot_common.h"
 
-#define IEX_BASE_URL                "https://cloud.iexapis.com/v1/"
-#define IEX_ACCESS_TOKEN_FILE_PATH  "/srv/iex_access_token"
+#ifdef IEX_SANDBOX_MODE
+#define IEX_BASE_URL                        "https://sandbox.iexapis.com/v1/"
+#else
+#define IEX_BASE_URL                        "https://cloud.iexapis.com/v1/"
+#endif
 
-#define IEX_GAINERS_ENDPOINT        "stock/market/list/gainers"
+#define IEX_ACCESS_TOKEN_FILE_PATH          "/srv/iex_access_token"
 
 #define IEX_ACCESS_TOKEN_SIZE       35
 #define IEX_MAX_URL_LEN             150
@@ -37,6 +40,7 @@ typedef struct {
     uint16_t list_limit;
     bool display_percent;
     uint16_t rx_list_size;
+    char symbol[IEX_MAX_SYMBOL_SIZE];
 } IEXParams;
 
 /**
@@ -93,7 +97,7 @@ typedef struct {
     double ytd_change;
     uint32_t last_trade_time;
     bool is_US_market_open;
-} GainersData;
+} QuoteData;
 
 /**
  * IEX Gainers index map enum.
@@ -101,62 +105,62 @@ typedef struct {
  */
 typedef enum
 {
-    GAINERS_SYMBOL                      = 0,
-    GAINERS_COMPANY_NAME                = 1,
-    GAINERS_PRIMARY_EXCHANGE            = 2,
-    GAINERS_CALCULATION_PRICE           = 3,
-    GAINERS_OPEN                        = 4,
-    GAINERS_OPEN_TIME                   = 5,
-    GAINERS_OPEN_SOURCE                 = 6,
-    GAINERS_CLOSE                       = 7,
-    GAINERS_CLOSE_TIME                  = 8,
-    GAINERS_CLOSE_SOURCE                = 9,
-    GAINERS_HIGH                        = 10,
-    GAINERS_HIGH_TIME                   = 11,
-    GAINERS_HIGH_SOURCE                 = 12,
-    GAINERS_LOW                         = 13,
-    GAINERS_LOW_TIME                    = 14,
-    GAINERS_LOW_SOURCE                  = 15,
-    GAINERS_LATEST_PRICE                = 16,
-    GAINERS_LATEST_SOURCE               = 17,
-    GAINERS_LATEST_TIME                 = 18,
-    GAINERS_LATEST_UPDATE               = 19,
-    GAINERS_LATEST_VOLUME               = 20,
-    GAINERS_IEX_REALTIME_PRICE          = 21,
-    GAINERS_IEX_REALTIME_SIZE           = 22,
-    GAINERS_IEX_LAST_UPDATED            = 23,
-    GAINERS_DELAYED_PRICE               = 24,
-    GAINERS_DELAYED_PRICE_TIME          = 25,
-    GAINERS_ODD_LOT_DELAYED_PRICE       = 26,
-    GAINERS_ODD_LOT_DELAYED_PRICE_TIME  = 27,
-    GAINERS_EXTENDED_PRICE              = 28,
-    GAINERS_EXTENDED_CHANGE             = 29,
-    GAINERS_EXTENDED_CHANGE_PERCENT     = 30,
-    GAINERS_EXTENDED_PRICE_TIME         = 31,
-    GAINERS_PREVIOUS_CLOSE              = 32,
-    GAINERS_PREVIOUS_VOLUME             = 33,
-    GAINERS_CHANGE                      = 34,
-    GAINERS_CHANGE_PERCENT              = 35,
-    GAINERS_VOLUME                      = 36,
-    GAINERS_IEX_MARKET_PERCENT          = 37,
-    GAINERS_IEX_VOLUME                  = 38,
-    GAINERS_AVG_TOTAL_VOLUME            = 39,
-    GAINERS_IEX_BID_PRICE               = 40,
-    GAINERS_IEX_BID_SIZE                = 41,
-    GAINERS_IEX_ASK_PRICE               = 42,
-    GAINERS_IEX_ASK_SIZE                = 43,
-    GAINERS_IEX_OPEN                    = 44,
-    GAINERS_IEX_OPEN_TIME               = 45,
-    GAINERS_IEX_CLOSE                   = 46,
-    GAINERS_IEX_CLOSE_TIME              = 47,
-    GAINERS_MARKET_CAP                  = 48,
-    GAINERS_PE_RATIO                    = 49,
-    GAINERS_WEEK_52_HIGH                = 50,
-    GAINERS_WEEK_52_LOW                 = 51,
-    GAINERS_YTD_CHANGE                  = 52,
-    GAINERS_LAST_TRADE_TIME             = 53,
-    GAINERS_IS_US_MARKET_OPEN           = 54,
-} GainersMap;
+   QUOTE_SYMBOL                      = 0,
+   QUOTE_COMPANY_NAME                = 1,
+   QUOTE_PRIMARY_EXCHANGE            = 2,
+   QUOTE_CALCULATION_PRICE           = 3,
+   QUOTE_OPEN                        = 4,
+   QUOTE_OPEN_TIME                   = 5,
+   QUOTE_OPEN_SOURCE                 = 6,
+   QUOTE_CLOSE                       = 7,
+   QUOTE_CLOSE_TIME                  = 8,
+   QUOTE_CLOSE_SOURCE                = 9,
+   QUOTE_HIGH                        = 10,
+   QUOTE_HIGH_TIME                   = 11,
+   QUOTE_HIGH_SOURCE                 = 12,
+   QUOTE_LOW                         = 13,
+   QUOTE_LOW_TIME                    = 14,
+   QUOTE_LOW_SOURCE                  = 15,
+   QUOTE_LATEST_PRICE                = 16,
+   QUOTE_LATEST_SOURCE               = 17,
+   QUOTE_LATEST_TIME                 = 18,
+   QUOTE_LATEST_UPDATE               = 19,
+   QUOTE_LATEST_VOLUME               = 20,
+   QUOTE_IEX_REALTIME_PRICE          = 21,
+   QUOTE_IEX_REALTIME_SIZE           = 22,
+   QUOTE_IEX_LAST_UPDATED            = 23,
+   QUOTE_DELAYED_PRICE               = 24,
+   QUOTE_DELAYED_PRICE_TIME          = 25,
+   QUOTE_ODD_LOT_DELAYED_PRICE       = 26,
+   QUOTE_ODD_LOT_DELAYED_PRICE_TIME  = 27,
+   QUOTE_EXTENDED_PRICE              = 28,
+   QUOTE_EXTENDED_CHANGE             = 29,
+   QUOTE_EXTENDED_CHANGE_PERCENT     = 30,
+   QUOTE_EXTENDED_PRICE_TIME         = 31,
+   QUOTE_PREVIOUS_CLOSE              = 32,
+   QUOTE_PREVIOUS_VOLUME             = 33,
+   QUOTE_CHANGE                      = 34,
+   QUOTE_CHANGE_PERCENT              = 35,
+   QUOTE_VOLUME                      = 36,
+   QUOTE_IEX_MARKET_PERCENT          = 37,
+   QUOTE_IEX_VOLUME                  = 38,
+   QUOTE_AVG_TOTAL_VOLUME            = 39,
+   QUOTE_IEX_BID_PRICE               = 40,
+   QUOTE_IEX_BID_SIZE                = 41,
+   QUOTE_IEX_ASK_PRICE               = 42,
+   QUOTE_IEX_ASK_SIZE                = 43,
+   QUOTE_IEX_OPEN                    = 44,
+   QUOTE_IEX_OPEN_TIME               = 45,
+   QUOTE_IEX_CLOSE                   = 46,
+   QUOTE_IEX_CLOSE_TIME              = 47,
+   QUOTE_MARKET_CAP                  = 48,
+   QUOTE_PE_RATIO                    = 49,
+   QUOTE_WEEK_52_HIGH                = 50,
+   QUOTE_WEEK_52_LOW                 = 51,
+   QUOTE_YTD_CHANGE                  = 52,
+   QUOTE_LAST_TRADE_TIME             = 53,
+   QUOTE_IS_US_MARKET_OPEN           = 54,
+} QuoteMap;
 
 /***************************************************************************//**
  * Loads API key from file.
@@ -175,6 +179,8 @@ TradebotStatus load_api_key(char *api_key);
  *                              populate.
  * @return  TradebotStatus      Result of operation.
  ******************************************************************************/
-TradebotStatus retrieve_gainers(IEXParams *params, GainersData *data);
+TradebotStatus retrieve_gainers(IEXParams *params, QuoteData *data);
+
+TradebotStatus retrieve_quote(IEXParams *params, QuoteData *data);
 
 #endif /* _IEX_API_H */
